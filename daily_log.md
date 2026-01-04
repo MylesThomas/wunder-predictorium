@@ -1,7 +1,9 @@
-# Day 1 - Saturday, January 3, 2026
-**Focus:** Run and understand the baseline
+# Daily Progress Log - Wunder Challenge
 
 ---
+
+# Day 1 - Saturday, January 3, 2026
+**Focus:** Run and understand the baseline
 
 ## Tasks
 - [x] Run baseline solution (example_solution/solution.py)
@@ -207,14 +209,138 @@ sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_AL
 4. ONNX provides fast inference (273 KB model)
 5. Architecture is simple - lots of room for improvement
 
-**Next Steps (Tomorrow):**
-- Implement improved GRU with larger capacity
-- Add custom weighted loss function
-- Train and compare to baseline
-- Target: +0.02-0.05 improvement
+---
+
+---
+
+# Day 2 - Sunday, January 4, 2026
+**Focus:** Create and submit v0 baseline
+
+## Tasks
+- [x] Review submission requirements and format
+- [x] Create v0 basic solution (copy/modify baseline)
+- [x] Test v0 solution locally with scorer
+- [x] Package and submit v0 to leaderboard
+
+---
+
+## Submission Requirements (Reviewed)
+
+### Required Structure
+```
+submission.zip
+├── solution.py         # Must be at root with PredictionModel class
+└── baseline.onnx       # Or other model files
+```
+
+### Key Requirements
+- ✅ `solution.py` at root level
+- ✅ `PredictionModel` class with `predict()` method
+- ✅ Returns `None` when `need_prediction=False`
+- ✅ Returns `np.array([t0, t1])` when `need_prediction=True`
+- ✅ Handles sequence resets (new `seq_ix`)
+
+### Resource Limits
+- CPU: 1 vCPU core
+- RAM: 16 GB
+- Time: 90 minutes max
+- No GPU, no internet
+- Environment: `python:3.11-slim-bookworm`
+
+---
+
+## v0 Submission Created ✅
+
+### Files
+```
+submissions/v0_baseline/
+├── solution.py (4.8 KB)
+└── baseline.onnx (273 KB)
+```
+
+### Local Test Results
+```
+Mean Weighted Pearson: 0.259505
+  t0: 0.388378
+  t1: 0.130631
+
+Processing time: 6:47 (407 seconds)
+Throughput: ~3,542 samples/sec
+```
+
+### Submission Package
+```
+File: submissions/v0_submission.zip
+Size: 253 KB (compressed from 277 KB)
+Contents:
+  - solution.py (compressed)
+  - baseline.onnx (compressed)
+```
+
+### Submission Status ⏳
+
+**Submitted:** Saturday, January 3, 2026 @ 10:30 PM ET
+**Status:** Processing (waiting for results)
+**Current leaderboard position:** 2780/2794 (temporary - no score yet)
+**Estimated completion:** 10-30 minutes
+
+Check status at: https://predictorium.wundernn.io/leaderboard
+
+---
+
+## How to Submit
+
+### Web Interface
+1. Go to: https://predictorium.wundernn.io/submit
+2. Upload: `submissions/v0_submission.zip`
+3. Wait for scoring (~90 minutes max)
+4. Check leaderboard: https://predictorium.wundernn.io/leaderboard
+
+---
+
+## Expected Leaderboard Performance
+
+**Local Validation Score:** 0.2595
+
+**Expected Test Score:** ~0.25-0.27 (assuming similar distribution)
+
+**Note:** Leaderboard score may differ slightly from validation due to:
+- Different data distribution in test set
+- Random noise in targets
+- Model generalization
+
+---
+
+## Next Steps After Submission
+
+1. **Monitor leaderboard** for v0 results
+2. **Analyze gap** between validation and test scores
+3. **Plan improvements** for v1:
+   - Increase model capacity (hidden size, layers)
+   - Add custom weighted loss
+   - Try longer context window (150 steps)
+   - Add dropout for regularization
+
+---
+
+## Day 2 Summary ✅
+
+**Completed:**
+- ✅ Reviewed submission requirements and packaging
+- ✅ Created v0 baseline submission (copy of provided example)
+- ✅ Tested locally (0.2595 score matches baseline)
+- ✅ Packaged and submitted to leaderboard
+
+**Key Actions:**
+- Established baseline on leaderboard
+- Verified submission pipeline works
+- Ready to iterate and improve
 
 ---
 
 ## Notes
 
-
+- This is our baseline - just copied the provided example
+- Goal is to establish a benchmark on the leaderboard
+- All improvements will be measured against this 0.2595 score
+- Quick submission to understand the evaluation process

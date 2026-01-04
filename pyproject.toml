@@ -1,0 +1,31 @@
+[project]
+name = "wunder-predictorium"
+version = "0.1.0"
+description = "Wunder Challenge: LOB Predictorium submission"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+    "pyarrow>=12.0.0",
+    "tqdm>=4.65.0",
+    "onnxruntime>=1.15.0",
+    "torch>=2.0.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "scikit-learn>=1.3.0",
+    "scipy>=1.11.0",
+    "jupyterlab>=4.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wunder_predictorium"]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.25.0",
+]
+

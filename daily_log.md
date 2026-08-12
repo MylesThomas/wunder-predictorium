@@ -277,37 +277,47 @@ Contents:
   - baseline.onnx (compressed)
 ```
 
-### Submission Status ⏳
+### Submission Status ✅
 
 **Submitted:** Saturday, January 3, 2026 @ 10:30 PM ET
-**Status:** Processing (waiting for results)
-**Current leaderboard position:** 2780/2794 (temporary - no score yet)
-**Estimated completion:** 10-30 minutes
+**Status:** Complete
+**Processing time:** ~11 hours (completed Sunday morning)
 
-Check status at: https://predictorium.wundernn.io/leaderboard
+### Leaderboard Results 🎉
 
----
+**Official Score: 0.2761**
+**Rank: 27/2846** (top 0.95%!)
+**Submissions: 1**
 
-## How to Submit
+### Score Analysis
 
-### Web Interface
-1. Go to: https://predictorium.wundernn.io/submit
-2. Upload: `submissions/v0_submission.zip`
-3. Wait for scoring (~90 minutes max)
-4. Check leaderboard: https://predictorium.wundernn.io/leaderboard
+**Comparison:**
+- Local validation: 0.2595
+- Test leaderboard: **0.2761**
+- Difference: **+0.0166** (+6.4% better on test!)
 
----
+**Why test > validation?**
+- Test set may have slightly different distribution
+- Or validation set is harder
+- Good sign: model generalizes well!
 
-## Expected Leaderboard Performance
+### Leaderboard Context
 
-**Local Validation Score:** 0.2595
+**Baseline tier (0.2761):**
+- 🤖 example_solution: 0.2761 (rank 9)
+- Many participants (ranks 9-31) have exactly 0.2761
+- This is the "everyone who submitted baseline unchanged" tier
 
-**Expected Test Score:** ~0.25-0.27 (assuming similar distribution)
+**Top performers:**
+- #1: insuperabilehart - **0.3051** (+10.5% over baseline, 25 submissions)
+- #2: cteceliker - **0.2931** (+6.2% over baseline, 4 submissions)
+- #3: aks - **0.2924** (+5.9% over baseline, 9 submissions)
+- #6: sultanmunirov - **0.2861** (+3.6% over baseline, 15 submissions)
 
-**Note:** Leaderboard score may differ slightly from validation due to:
-- Different data distribution in test set
-- Random noise in targets
-- Model generalization
+**Gap analysis:**
+- To reach #1: Need **+0.029** improvement (~10.5% gain)
+- To reach top 5: Need **+0.015** improvement (~5.4% gain)
+- To beat baseline tier: Need **+0.001** improvement (any improvement moves us up)
 
 ---
 
@@ -328,19 +338,328 @@ Check status at: https://predictorium.wundernn.io/leaderboard
 **Completed:**
 - ✅ Reviewed submission requirements and packaging
 - ✅ Created v0 baseline submission (copy of provided example)
-- ✅ Tested locally (0.2595 score matches baseline)
+- ✅ Tested locally (0.2595 score)
 - ✅ Packaged and submitted to leaderboard
+- ✅ **Achieved rank 27/2846 (0.2761) - top 1%!**
 
-**Key Actions:**
-- Established baseline on leaderboard
-- Verified submission pipeline works
-- Ready to iterate and improve
+**Key Findings:**
+- Test score (0.2761) > validation score (0.2595) - good generalization!
+- Matched official baseline exactly
+- 22 people ahead using baseline tier (0.2761)
+- Top performer at 0.3051 (+10.5% over baseline)
+- Clear path to improvement: bigger models, better loss, feature engineering
+
+**What top performers are doing:**
+- Multiple submissions (4-25 attempts)
+- Likely: larger models, custom loss functions, feature engineering
+- Need to iterate and experiment
+
+---
+
+---
+
+# Day 3 - Sunday, January 5, 2026
+**Focus:** Iterative improvements - test one change at a time
+
+## Model Versions & Locations
+
+```
+submissions/
+├── v0_baseline/          # Baseline (provided example)
+│   ├── solution.py
+│   ├── baseline.onnx
+│   └── v0_submission.zip
+├── v1_improved_arch/     # Bigger architecture (in progress)
+│   ├── solution.py       (to be created)
+│   ├── v1_model.onnx     (to be created)
+│   └── v1_submission.zip (to be created)
+├── v2_weighted_loss/     # v1 + weighted loss (planned)
+└── v3_features/          # v2 + feature engineering (planned)
+
+models/                   # Trained PyTorch models
+├── v1_improved_gru.pt    # v1 checkpoint (training now)
+├── v2_weighted.pt        # v2 checkpoint (planned)
+└── v3_features.pt        # v3 checkpoint (planned)
+
+src/
+├── models/
+│   ├── improved_gru.py   # v1 model architecture
+│   └── ...
+└── training/
+    ├── train_v1.py       # v1 training script
+    └── ...
+```
+
+## Strategy
+Test changes incrementally to understand what actually works:
+1. v0 → v1: Bigger architecture only
+2. v1 → v2: Add weighted loss
+3. v2 → v3: Add feature engineering
+4. Track scores after each submission
+
+## Baseline (v0)
+- **Local validation:** 0.2595
+- **Test (leaderboard):** 0.2761
+- **Rank:** 27/2846
+
+---
+
+## v1: Improved Architecture
+
+### Changes from v0:
+- Hidden size: 128 → 256 (more capacity)
+- Layers: 1 → 2 (deeper network)
+- Added dropout: 0.3 (GRU) + 0.2 (Dense)
+- Added Dense layer before output
+- **Loss:** Standard MSE (same as baseline)
+
+### Tasks
+- [x] Analyze test vs validation gap
+- [x] Design v1 architecture
+- [x] Implement v1 model (PyTorch)
+- [x] Train on training set
+- [x] Test on validation set
+- [ ] ~~Export to ONNX~~ (skipped - model worse than baseline)
+- [ ] ~~Submit v1 to leaderboard~~ (skipped - model worse than baseline)
+
+### Results ❌ FAILED
+- **Training loss:** 0.9307
+- **Validation loss:** 2.4405 (gap = 1.51 → severe overfitting!)
+- **Local validation WPCC:** 0.1788
+- **Test (leaderboard):** ❌ NOT SUBMITTED
+- **Change from v0:** -0.0807 (-31.1%)
+
+### Root Cause: Overfitting
+Bigger model (256 hidden, 2 layers, dropout) learned training data but couldn't generalize.
+**Key lesson:** Start with baseline architecture, change ONE thing at a time.
+
+---
+
+## v2: Weighted Loss ❌ FAILED (WORSE THAN v1!)
+
+**Status:** ✅ Completed - DISASTROUS results, NOT submitted
+
+### Hypothesis (WRONG!)
+"If we weight t0 4x in the loss to match WPCC (0.8*t0 + 0.2*t1), the model will optimize for what we're evaluated on."
+
+### Changes from v0:
+- ⬇️ **Architecture:** Same as baseline (64 hidden, 1 layer, light dropout)
+- ❌ **Loss function:** MSE → Weighted MSE (t0=4x, t1=1x)
+- Same 32 raw features
+
+### Model Stats
+- **Parameters:** 20,962
+- **Training samples:** 9.6M from 10,721 sequences
+- **Validation samples:** 1.3M from 1,444 sequences
+- **Epochs:** 10 (trained 8:18AM - 3:54PM, ~7.5 hours)
+
+### Results ❌ CATASTROPHIC FAILURE
+- **Training loss:** 2.010 → 1.787 (decreasing)
+- **Validation loss:** 5.071 → 6.856 (increasing!)
+- **Local validation WPCC:** 0.0908 (t0: 0.109, t1: 0.016)
+- **Test (leaderboard):** ❌ NOT SUBMITTED
+- **Change from v0:** -0.1687 (-65.0%) - WORSE than v1!
+
+### Root Cause: Wrong Optimization Target
+**Critical mistake:** Minimizing weighted MSE ≠ maximizing Pearson correlation!
+- Weighted loss forced model to heavily prioritize t0 absolute error
+- This distorted predictions and destroyed correlation for BOTH targets
+- Model overfitted to weighted loss (val loss increased every epoch)
+- **Lesson:** Don't optimize for a proxy metric - it can backfire spectacularly
+
+### Key Insights
+1. **MSE and correlation are different objectives**
+   - Low MSE doesn't guarantee high correlation
+   - Weighting makes it worse by distorting the prediction distribution
+2. **Baseline's standard MSE is actually working well**
+   - Maybe we shouldn't mess with the loss function
+3. **Both v1 and v2 made things worse**
+   - v1: Overfitting from too much capacity
+   - v2: Wrong loss function destroyed correlation
+4. **Need a different approach for v3**
+
+---
+
+## v3: What Should We Try Next?
+
+**Current situation:** Both attempts to improve baseline have failed badly.
+
+### What We've Learned (The Hard Way)
+1. ❌ **Bigger model doesn't help** (v1: overfitting)
+2. ❌ **Weighted loss backfires** (v2: wrong optimization target)
+3. ✅ **Baseline is actually pretty good** (0.2595 local, 0.2761 test)
+
+### Possible Directions for v3
+
+#### Option A: Keep It Simple, Tune Better
+- Go back to baseline architecture + standard MSE
+- Focus on training improvements:
+  - Better learning rate schedule
+  - More epochs with early stopping
+  - Different optimizer settings
+  - Gradient clipping adjustments
+
+#### Option B: Feature Engineering
+- Keep baseline arch + MSE (what works)
+- Add hand-crafted features:
+  - Order book imbalance: `(bid_vol - ask_vol) / (bid_vol + ask_vol)`
+  - Spread features
+  - Rolling statistics (mean, std over last N steps)
+  - Momentum indicators
+- Risk: More features might help or might add noise
+
+#### Option C: Data Augmentation
+- Keep everything same as baseline
+- Train with more data:
+  - Combine train + validation sets
+  - Use longer sequences or different windows
+
+#### Option D: Different Architecture (Risky)
+- Try Transformer instead of GRU
+- Try CNN for capturing patterns
+- Risk: Could easily overfit like v1
+
+### Recommendation
+**Start with Option A or B** - low risk, builds on what works.
+
+What do you think?
+
+---
+
+## Day 3 Summary ✅
+
+**Completed:**
+- ✅ Trained v1 model (bigger architecture)
+- ✅ Validated v1 → 0.1788 WPCC (failed - overfitting)
+- ✅ Designed v2 approach (weighted loss)
+- ✅ Implemented v2 model (baseline arch + weighted MSE)
+- ✅ Started v2 training (8:18AM)
+
+**Key Findings:**
+- v1 overfitted badly (67k params too many, dropout didn't help)
+- Decision: Revert to baseline architecture for v2
+- Only change loss function to test one variable at a time
+
+**Blockers:** None - v2 training overnight
+
+---
+
+# Day 4 - Wednesday, January 8, 2026
+**Focus:** Complete v2, analyze failures, plan better v3 strategy
+
+## Tasks Completed
+- [x] Completed v2 training (~7.5 hours, 10 epochs)
+- [x] Validated v2 on validation set
+- [x] Analyzed v2 failure (weighted loss backfired)
+- [x] Documented both v1 and v2 failures
+- [x] Updated all documentation with results
+
+## v2 Training Results
+- **Started:** 8:18AM
+- **Completed:** ~3:54PM
+- **Duration:** ~7.5 hours (10 epochs)
+- **Training loss:** 2.010 → 1.787
+- **Validation loss:** 5.071 → 6.856 (increasing = bad sign!)
+- **Final WPCC:** 0.0908 (-65% vs baseline)
+
+## Critical Insights from v1 & v2 Failures
+
+### What We Tried & Why It Failed
+
+| Version | Change | Hypothesis | Result | Why Failed |
+|---------|--------|-----------|---------|------------|
+| v1 | Bigger model (256h, 2L) | More capacity = better learning | 0.1788 (-31%) | Overfitting - too complex for data |
+| v2 | Weighted loss (4x t0) | Match eval metric weights | 0.0908 (-65%) | MSE ≠ correlation, distorted predictions |
+
+### Key Lessons
+1. **Baseline is surprisingly good** (0.2595 local, 0.2761 test)
+2. **Bigger isn't better** - led to overfitting
+3. **Don't optimize wrong metric** - weighted MSE destroyed correlation
+4. **Change one thing at a time** - confirmed this principle is critical
+5. **Need fundamentally different approach** - can't just tweak baseline
+
+## v3 Strategy Discussion
+
+### Options Considered
+
+**A. Better Training Hyperparameters** (Low Risk)
+- Keep baseline arch + MSE
+- Tune: learning rate schedule, more epochs, early stopping
+- Pro: Safe, builds on what works
+- Con: Unlikely to get big gains
+
+**B. Feature Engineering** (Moderate Risk)  
+- Keep baseline arch + MSE
+- Add: order book imbalance, spread, rolling stats, momentum
+- Pro: Only thing we haven't tried yet
+- Con: More features could add noise
+
+**C. More Training Data** (Low Risk)
+- Combine train + validation sets
+- Pro: More data usually helps
+- Con: Lose validation set for local testing
+
+**D. Different Architecture** (High Risk)
+- Try Transformer, CNN, or other architectures
+- Pro: Could capture different patterns
+- Con: Likely to overfit like v1
+
+### Decision: v3 Strategy
+
+**Critical Realization:** We've been trying to "improve" baseline without knowing if we can even **replicate** it!
+
+**New Approach:**
+1. First, find architecture that matches baseline's 0.2595 validation score
+2. Once we can replicate it, we know our training pipeline works
+3. THEN we can make actual improvements with confidence
+
+### v3 Plan: Systematic Architecture Search
+Try different GRU configs with standard MSE loss until we match baseline:
+- [x] Try 1: GRU(32 hidden, 1 layer) → **0.047 (-81.88%)** ❌ TERRIBLE
+- [ ] Try 2: GRU(64 hidden, 1 layer) 
+- [ ] Try 3: GRU(128 hidden, 1 layer)
+- [ ] Try 4: GRU(64 hidden, 2 layers)
+- [ ] Try 5: GRU(128 hidden, 2 layers)
+
+**Stop when:** We get ~0.25+ validation score (close to baseline)
+**Then:** We have a working baseline replica to improve from!
+
+### v3 Try 1 Results (GRU 32h, 1L)
+- **Trained:** 10 epochs, ~3.5 hours
+- **Model:** `models/v3_h32_l1.pt` (91KB, only 6,898 params!)
+- **Validation WPCC:** 0.047 
+  - t0: 0.058
+  - t1: 0.001 (basically zero!)
+- **Result:** **COMPLETE FAILURE** - worse than v1 and v2 combined
+- **Analysis:** Model way too small - can't learn anything meaningful from the data
+
+---
+
+## Model Versions & Locations
+
+| Version | Location | Status |
+|---------|----------|--------|
+| v0 | `submissions/v0_baseline/` | ✅ Submitted (0.2761) |
+| v1 | `models/v1_improved_gru.pt` | ❌ Failed - overfitting |
+| v2 | `models/v2_weighted_gru.pt` | ❌ Failed - weighted loss backfired |
+| v3 Try 1 | `models/v3_h32_l1.pt` | ❌ Failed - way too small (0.047) |
+
+**Training code:**
+- v1: `src/models/improved_gru.py`, `src/training/train_v1.py`
+- v2: `src/models/weighted_gru.py`, `src/training/train_v2.py`
+- Validation: `src/evaluation/validate_v{1,2}.py`
+
+## Score Tracking Table
+
+| Version | Architecture | Loss | Features | Params | Val Score | Test Score | Rank | Delta |
+|---------|-------------|------|----------|--------|-----------|------------|------|-------|
+| v0 | GRU(64,1) | MSE | 32 raw | ~20k | **0.2595** | **0.2761** | **27** | - |
+| v1 | GRU(256,2) | MSE | 32 raw | 67k | 0.1788 | ❌ | - | -0.0807 (-31%) |
+| v2 | GRU(64,1) | Weighted MSE | 32 raw | 21k | **0.0908** | ❌ | - | **-0.1687 (-65%)** |
+| v3 Try 1 | GRU(32,1) | MSE | 32 raw | 7k | **0.047** | ❌ | - | **-0.2125 (-81.88%)** 💀 |
+
+**Key insight:** Baseline is still the best! Every attempt has made it worse. v3 Try 1 is the worst yet!
 
 ---
 
 ## Notes
-
-- This is our baseline - just copied the provided example
-- Goal is to establish a benchmark on the leaderboard
-- All improvements will be measured against this 0.2595 score
-- Quick submission to understand the evaluation process

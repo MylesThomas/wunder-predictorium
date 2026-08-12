@@ -32,24 +32,36 @@ python data_exploration.py
 ```
 .
 ├── docs/                           # Competition documentation
-│   ├── QUICK_START.md             # Getting started guide
-│   ├── DATA.md                    # Data overview and features
-│   ├── SUBMISSION_GUIDE.md        # Submission requirements
-│   ├── RULES.md                   # Competition rules
-│   ├── TIMELINE.md                # Key dates
-│   ├── PRIZES.md                  # Prize information
-│   ├── FAQ.md                     # Frequently asked questions
-│   └── GET_HELP.md                # Support channels
 ├── exploration/                    # Data exploration scripts
-│   └── data_exploration.py        # Analyze train/valid datasets
-├── models/                         # Trained models
+│   └── ANALYSIS_SUMMARY.md        # Key insights from data analysis
+├── models/                         # Trained PyTorch models (.pt files)
+│   ├── v1_improved_gru.pt         # v1: Bigger architecture (failed)
+│   ├── v2_weighted_gru.pt         # v2: Baseline + weighted loss (training...)
+│   └── v3_features.pt             # v3: v2 + features (planned)
 ├── notebooks/                      # Jupyter notebooks
-├── src/                           # Source code for solution
-├── submissions/                    # Submission files
+├── src/                           # Source code for solutions
+│   ├── models/                    # Model architectures
+│   │   └── improved_gru.py        # v1 GRU model
+│   ├── training/                  # Training scripts
+│   │   └── train_v1.py            # v1 training
+│   └── wunder_predictorium/
+│       └── __init__.py
+├── submissions/                    # Submission packages
+│   ├── v0_baseline/               # Baseline (provided example)
+│   │   ├── solution.py
+│   │   ├── baseline.onnx          # 273 KB
+│   │   └── v0_submission.zip      # Score: 0.2761, Rank: 27
+│   ├── v1_improved_arch/          # Bigger architecture (in progress)
+│   │   ├── solution.py
+│   │   ├── v1_model.onnx
+│   │   └── v1_submission.zip
+│   ├── v2_weighted_loss/          # v1 + weighted loss (planned)
+│   └── v3_features/               # v2 + feature engineering (planned)
 ├── wnn_predictorium_starterpack/  # Official starter pack
 │   ├── datasets/                  # Training and validation data
 │   ├── example_solution/          # Baseline solution
 │   └── utils.py                   # Helper functions
+├── daily_log.md                   # Progress tracking
 ├── pyproject.toml                 # Project dependencies (uv)
 └── .python-version                # Python version (3.11)
 ```
@@ -63,11 +75,30 @@ python data_exploration.py
 
 ## Development Workflow
 
-1. **Explore**: Run `exploration/data_exploration.py` to understand the data
-2. **Develop**: Create your model in `src/`
-3. **Train**: Use `wnn_predictorium_starterpack/datasets/train.parquet`
-4. **Validate**: Test on `wnn_predictorium_starterpack/datasets/valid.parquet`
+### Current Progress (as of Jan 8, 2026)
+- **v0 (Baseline):** 0.2761 test score, Rank 27/2846 ✅
+- **v1 (Bigger Arch):** 0.1788 local val - FAILED (overfitting) ❌
+- **v2 (Weighted Loss):** 0.0908 local val - FAILED (weighted loss backfired) ❌
+- **v3:** Planning next approach... 🤔
+
+### Workflow
+1. **Explore**: Completed - see `exploration/ANALYSIS_SUMMARY.md`
+2. **Develop**: Models in `src/models/`, train with `src/training/`
+3. **Train**: PyTorch models saved to `models/`
+4. **Validate**: Test on validation set
 5. **Export**: Convert to ONNX for fast inference
-6. **Submit**: Zip your `solution.py` and model files
+6. **Submit**: Package in `submissions/vX/` and upload to leaderboard
+7. **Iterate**: Analyze results, make improvements
+
+### Model Versions
+
+| Version | Changes | Local Val | Test Score | Rank | Status |
+|---------|---------|-----------|------------|------|--------|
+| v0 | Baseline GRU (64h, 1L) | **0.2595** | **0.2761** | **27** | ✅ Submitted |
+| v1 | Bigger arch (256h, 2L, dropout) | 0.1788 | ❌ | - | ❌ Failed (overfitting) |
+| v2 | Baseline + weighted loss | 0.0908 | ❌ | - | ❌ Failed (wrong loss fn) |
+| v3 | TBD | - | - | - | 🤔 Planning... |
+
+**Key Finding:** Baseline is still the best after 2 failed improvement attempts!
 
 Good luck! 🚀
